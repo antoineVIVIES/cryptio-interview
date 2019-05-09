@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+    dashboard:
+      container_name: app
+      restart: always
+      build: .
+      ports:
+        - 8080:80

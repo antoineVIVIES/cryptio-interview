@@ -1,0 +1,15 @@
+{
+	"name": "web_app",
+	"version": "1.0.0",
+	"description": "my web app",
+	"author": "Antoine VIVIES <antoine.vives@epitech.eu>",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"axios": "^0.18.0",
+		"body-parser": "^1.19.0",
+		"express": "^4.16.4"
+	}
+}

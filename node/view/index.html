@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="converter">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<title>Document</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+</head>
+
+<body ng-controller="myController">
+	<div class="row" style="margin-right: 0px!important; margin-left:0px!important">
+		<div class="col-md-6">
+
+		<div class="input-group mb-3">
+			<input type="text" class="form-control" ng-model="value" aria-label="Amount (to the nearest dollar)">
+			<div class="input-group-append">
+				<select class="select-custom" ng-model="base">
+					<option ng-repeat="val in allDevise" value="{{val}}" selected>{{val}}</option>
+				</select>
+			</div>
+				
+		</div>
+	      
+		</div>
+		<div class="col-md-6">
+			<p style="display: inline">Select your quote currency:</p>
+			<select class="custom-select" ng-model="quote">
+				<option ng-repeat="val in allDevise" value="{{val}}" selected>{{val}}</option>
+			</select>
+		</div>
+	</div>
+	<br>
+	<div class="row" style="margin-right: 0px!important; margin-left:0px!important">
+		<button ng-click=getExchange()>Click me!</button>
+
+		<p ng-if="result != 0">{{value_response}} {{base_result}} is equal to {{result}} {{quote_result}}</p>
+		<p ng-if="error != ''">{{error}}</p>
+	</div>
+</body>
+
+<script>
+	var app = angular.module("converter", [])
+
+	app.controller("myController", function($scope, $http) {
+
+		$scope.base = "EUR"
+		$scope.value = 1
+		$scope.quote = "USD"
+		$scope.result = 0
+
+		$http.get('https://api.exchangeratesapi.io/latest' , {}
+		).then(function successCallback(response) {
+			response = response.data.rates
+			$scope.allDevise = []
+			for(var k in response) $scope.allDevise.push(k);
+			$scope.allDevise.push("EUR")
+		}, function errorCallback(response) {
+			console.log(response)
+		});
+
+		$scope.getExchange = (data) => {
+			console.log($scope.base)
+			$http.post('/getExchange',{base_currency : $scope.base, quote_currency: $scope.quote, value: $scope.value}
+			).then(function successCallback(response) {
+				$scope.value_response = response.data.value
+				$scope.result = response.data.result
+				$scope.base_result = response.data.base
+				$scope.quote_result = response.data.quote
+				$scope.error = ""
+			}, function errorCallback(response) {
+				$scope.error = response.data.error
+				$scope.result = ""
+			});
+		}
+	})
+</script>
+
+</html>
